@@ -4,6 +4,9 @@ https://github.com/ethereum/devp2p/blob/master/rlpx.md#node-discovery
 https://github.com/ethereum/wiki/wiki/%C3%90%CE%9EVp2p-Wire-Protocol
 https://github.com/ethereum/wiki/wiki/Ethereum-Wire-Protocol
 https://github.com/ethereum/wiki/wiki/Adaptive-Message-IDs
+https://github.com/ethereum/wiki/wiki/Kademlia-Peer-Selection
+https://github.com/ethereum/go-ethereum/blob/master/params/bootnodes.go
+https://github.com/ethereum/devp2p/blob/master/discv4.md#endpoint-proof
 License: Not defined yet
 Added By: @fjrojasgarcia
 ////
@@ -11,12 +14,16 @@ Added By: @fjrojasgarcia
 [[communications_between_nodes]]
 == Communications between nodes - A simplified vision
 
-Ethereum nodes communicate among themselves using a simple wire protocol forming a virtual or overlay _well-formed network_.
-To achieve this goal, this protocol called *ÐΞVp2p*, uses technologies and standards such as *RLP*.
+Ethereum nodes communicate among themselves using a simple wire protocol forming a virtual or overlay _well-formed network_ known as *ÐΞVp2p*. A node will have hardcoded bootstrap nodes which provide a means of connecting to other nodes in the network. Full nodes have their own routing tables that have adapted over time based on the Kademlia routing algorithm, which can be prompted for neighbors. From there, the topology
+
+It achieves this goal by providing uses technologies and standards such as Recursive-Length-Prefix *TODO: "Insert link here"* (*RLP*). It is responsible for all peer-to-peer communications in the Ethereum client. We start from  
+
+[[
 
 [[transport_protocol]]
 === Transport protocol
 In order to provide confidentiality and protect against network disruption, *ÐΞVp2p* nodes use *RLPx* messages, an encrypted and authenticated _transport protocol_.
+
 *RLPx* utilizes a routing algorithm similar to *Kademlia*, which is a distributed hash table (*DHT*) for decentralized peer-to-peer computer networks.
 
 *RLPx*, as an underlying transport protocol, allows among other, _"Node Discovery and Network Formation"_.
@@ -25,6 +32,12 @@ Another remarkable feature of *RLPx* is the support of _multiple protocols_ over
 When *ÐΞVp2p* nodes communicate via Internet (as they usually do), they use TCP, which provides a connection-oriented medium, but actually *ÐΞVp2p* nodes communicate in terms of packets, using the so-called facilities (or messages) provided by the underlying transport protocol *RLPx*, allowing them to communicate sending and receiving packets.
 
 Packets are _dynamically framed_, prefixed with an _RLP_ encoded header, encrypted and authenticated. Multiplexing is achieved via the frame header which specifies the destination protocol of a packet.
+
+==== Kademlia - Traversing the DHT
+
+In order to store data efficiently without a central server, we need to make use of a distributed hash table (*DHT*). Keeping track of every peer in the network
+
+
 
 ==== Encrypted Handshake
 Connections are established via a handshake and, once established, packets are encrypted and encapsulated as frames.
@@ -116,3 +129,8 @@ The identity of a *ÐΞVp2p* node is a *secp256k1* public key.
 Clients are free to mark down new nodes and use the node ID as a means of _determining a node's reputation_.
 
 They can store ratings for given IDs and give preference accordingly.
+
+=== Eclipse Attacks
+
+TODO: Add example with how eclipse/amplification attack can occur, step by step. This will greatly provide intuition with diagrams. After that, show the solution (Endpoint Proof).
+
